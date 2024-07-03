@@ -32,7 +32,7 @@ function Home() {
       <p className="pt-4">
         <hr></hr>
       </p>
-      <NavBar />
+     
       <Podcasts />
     </div>
   );
