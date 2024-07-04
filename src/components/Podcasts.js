@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
 
 function Podcasts() {
@@ -46,10 +47,12 @@ function Podcasts() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPodcasts.map((podcast) => (
             <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-              <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">{podcast.title}</h2>
-              </div>
+              <Link to={`/podcast/${podcast.id}`}>
+                <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
+                <div className="p-4">
+                  <h2 className="text-xl font-semibold">{podcast.title}</h2>
+                </div>
+              </Link>
             </div>
           ))}
         </div>
