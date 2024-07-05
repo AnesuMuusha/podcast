@@ -16,8 +16,10 @@ function Podcasts() {
           throw new Error(`Network response was not ok: ${response.statusText} (status code: ${response.status})`);
         }
         const data = await response.json();
-        setPodcasts(data);
-        setFilteredPodcasts(data);
+        // Sort podcasts alphabetically by title
+        const sortedData = data.sort((a, b) => a.title.localeCompare(b.title));
+        setPodcasts(sortedData);
+        setFilteredPodcasts(sortedData);
       } catch (error) {
         console.error('Error fetching podcasts:', error);
         setError(error.message);
