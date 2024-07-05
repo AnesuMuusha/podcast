@@ -44,6 +44,17 @@ function PodcastDetails() {
             <h3 className="text-lg font-semibold">Season {index + 1}</h3>
             <p>{season.description}</p>
             <p>Episodes: {season.episodes.length}</p>
+            <ul className="ml-4">
+              {season.episodes.map((episode, episodeIndex) => (
+                <li key={episodeIndex} className="mb-4">
+                  Episode {episodeIndex + 1}
+                  <audio controls>
+                    <source src="https://podcast-api.netlify.app/placeholder-audio.mp3" type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
