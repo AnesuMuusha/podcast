@@ -1,6 +1,6 @@
 import React from 'react';
 
-function NavBar({ onSelectGenre }) {
+function NavBar({ onSelectGenre, setSearchQuery }) {
   const genres = [
     { id: 1, name: 'Personal Growth' },
     { id: 2, name: 'Investigative Journalism' },
@@ -14,13 +14,21 @@ function NavBar({ onSelectGenre }) {
   ];
 
   return (
-    <div>
-      <span onClick={() => onSelectGenre(null)} style={{ cursor: 'pointer', marginRight: '10px' }}>Home</span> | 
-      {genres.map((genre) => (
-        <span key={genre.id} onClick={() => onSelectGenre(genre.id)} style={{ cursor: 'pointer', marginLeft: '10px' }}>
-          {genre.name}
-        </span>
-      ))}
+    <div className="bg-gray-800 text-white p-4">
+      <div className="flex flex-col sm:items-center sm:space-x-4">
+        <span onClick={() => onSelectGenre(null)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">Home</span>
+        {genres.map((genre) => (
+          <span key={genre.id} onClick={() => onSelectGenre(genre.id)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">
+            {genre.name}
+          </span>
+        ))}
+        <input
+          type="text"
+          placeholder="Search"
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded-md p-2 w-full sm:w-auto sm:flex-1 text-black"
+        />
+      </div>
     </div>
   );
 }
