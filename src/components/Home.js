@@ -2,20 +2,13 @@ import React from "react";
 import Podcasts from "./Podcasts";
 
 function Home() {
- 
-
   return (
-    <div>
-      <div className="flex flex-row pt-2">
-        <input placeholder="Search" className="border rounded"></input>
-        <h4 className="text-red-700 px-16">The 8 PM podcast</h4>
-     
+    <div className="p-4 bg-gray-800">
+      <div className="flex flex-col items-center space-y-2 pt-2">
+        <h1 className="text-orange-400 text-5xl font-bold leading-tight text-center sm:text-2xl">The 8 PM Podcast</h1>
       </div>
-      <p className="pt-4">
-        <hr></hr>
-      </p>
-     
-      <Podcasts />
+      <hr className="my-4 border-gray-200" />
+      <Podcasts/>
     </div>
   );
 }
