@@ -1,65 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
 
-function PodcastDetails() {
-  const { id } = useParams();
-  const [podcast, setPodcast] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchPodcastDetails = async () => {
-      try {
-        const response = await fetch(`https://podcast-api.netlify.app/id/${id}`);
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText} (status code: ${response.status})`);
-        }
-        const data = await response.json();
-        setPodcast(data);
-      } catch (error) {
-        console.error('Error fetching podcast details:', error);
-        setError(error.message);
-      }
-    };
-
-    fetchPodcastDetails();
-  }, [id]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!podcast) {
-    return <div>Loading...</div>;
-  }
+function NavBar({ onSelectGenre, setSearchQuery }) {
+  const genres = [
+    { id: 1, name: 'Personal Growth' },
+    { id: 2, name: 'Investigative Journalism' },
+    { id: 3, name: 'History' },
+    { id: 4, name: 'Comedy' },
+    { id: 5, name: 'Entertainment' },
+    { id: 6, name: 'Business' },
+    { id: 7, name: 'Fiction' },
+    { id: 8, name: 'News' },
+    { id: 9, name: 'Kids and Family' },
+  ];
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{podcast.title}</h1>
-      <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
-      <p className="mt-4">{podcast.description}</p>
-      <h2 className="text-xl font-semibold mt-4">Seasons</h2>
-      <ul>
-        {podcast.seasons.map((season, index) => (
-          <li key={index} className="mt-2">
-            <h3 className="text-lg font-semibold">Season {index + 1}</h3>
-            <p>{season.description}</p>
-            <p>Episodes: {season.episodes.length}</p>
-            <ul className="ml-4">
-              {season.episodes.map((episode, episodeIndex) => (
-                <li key={episodeIndex} className="mb-4">
-                  Episode {episodeIndex + 1}
-                  <audio controls>
-                    <source src="https://podcast-api.netlify.app/placeholder-audio.mp3" type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </li>
-              ))}
-            </ul>
-          </li>
+    <div className="bg-gray-800 text-white p-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+        <span onClick={() => onSelectGenre(null)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">Home</span>
+        {genres.map((genre) => (
+          <span key={genre.id} onClick={() => onSelectGenre(genre.id)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">
+            {genre.name}
+          </span>
         ))}
-      </ul>
+        <input
+          type="text"
+          placeholder="Search"
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded-md p-2 w-full sm:w-auto sm:flex-1 text-black"
+        />
+      </div>
     </div>
   );
 }
 
-export default PodcastDetails;
+export default NavBar;

@@ -38,21 +38,21 @@ function Podcasts() {
   }, [selectedGenre, podcasts]);
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 p-4">Error: {error}</div>;
   }
 
   return (
-    <div>
+    <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Podcasts</h1>
+        <h1 className="text-2xl font-bold mb-4 text-orange-400">Podcasts</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPodcasts.map((podcast) => (
-            <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <Link to={`/podcast/${podcast.id}`}>
                 <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold">{podcast.title}</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">{podcast.title}</h2>
                 </div>
               </Link>
             </div>
