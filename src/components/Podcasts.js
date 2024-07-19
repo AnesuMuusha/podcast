@@ -7,6 +7,7 @@ function Podcasts() {
   const [filteredPodcasts, setFilteredPodcasts] = useState([]);
   const [error, setError] = useState(null);
   const [selectedGenre, setSelectedGenre] = useState(null);
+  const [sortOption, setSortOption] = useState('title-asc');
 
   useEffect(() => {
     const fetchPodcasts = async () => {
@@ -16,10 +17,8 @@ function Podcasts() {
           throw new Error(`Network response was not ok: ${response.statusText} (status code: ${response.status})`);
         }
         const data = await response.json();
-        // Sort podcasts alphabetically by title
-        const sortedData = data.sort((a, b) => a.title.localeCompare(b.title));
-        setPodcasts(sortedData);
-        setFilteredPodcasts(sortedData);
+        setPodcasts(data);
+        setFilteredPodcasts(data);
       } catch (error) {
         console.error('Error fetching podcasts:', error);
         setError(error.message);
@@ -30,12 +29,31 @@ function Podcasts() {
   }, []);
 
   useEffect(() => {
-    if (selectedGenre) {
-      setFilteredPodcasts(podcasts.filter(podcast => podcast.genres.includes(selectedGenre)));
-    } else {
-      setFilteredPodcasts(podcasts);
+    let sortedPodcasts = [...podcasts];
+
+    switch (sortOption) {
+      case 'title-asc':
+        sortedPodcasts.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'title-desc':
+        sortedPodcasts.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      case 'updated-recent':
+        sortedPodcasts.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+        break;
+      case 'updated-oldest':
+        sortedPodcasts.sort((a, b) => new Date(a.updated) - new Date(b.updated));
+        break;
+      default:
+        break;
     }
-  }, [selectedGenre, podcasts]);
+
+    if (selectedGenre) {
+      setFilteredPodcasts(sortedPodcasts.filter(podcast => podcast.genres.includes(selectedGenre)));
+    } else {
+      setFilteredPodcasts(sortedPodcasts);
+    }
+  }, [sortOption, selectedGenre, podcasts]);
 
   if (error) {
     return <div className="text-red-500 p-4">Error: {error}</div>;
@@ -46,13 +64,27 @@ function Podcasts() {
       <NavBar onSelectGenre={setSelectedGenre} />
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4 text-orange-400">Podcasts</h1>
+        <div className="mb-4">
+          <label className="text-white mr-2">Sort by:</label>
+          <select 
+            value={sortOption} 
+            onChange={(e) => setSortOption(e.target.value)} 
+            className="p-2 rounded-md"
+          >
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+            <option value="updated-recent">Most Recently Updated</option>
+            <option value="updated-oldest">Least Recently Updated</option>
+          </select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPodcasts.map((podcast) => (
             <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <Link to={`/podcast/${podcast.id}`}>
                 <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold text-gray-900">{podcast.title}</h2>
+                  <h2 className="text-xl font-semibold text-orange-400">{podcast.title}</h2>
+                  <h2 className="text-xl font-semibold text-orange-400">{podcast.genres}</h2>
                 </div>
               </Link>
             </div>
