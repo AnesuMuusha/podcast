@@ -45,26 +45,51 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+User sees genres associated with a show when browsing. #Done
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+User sees a preview image of seasons for a specific show. #Done
 
-### Making a Progressive Web App
+User sees the number of episodes for a season. #Done
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+User can go back to a show view from a season-specific view. #Done
 
-### Advanced Configuration
+ Fetch All Show Data #Done
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+All show data loaded via a fetch call from the API. #Done
 
-### Deployment
+When viewing a specific show, data is loaded via fetch from individual show endpoint. #Done
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+There is a loading state while initial data is being loaded. #Done
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+ Loading New Data State #Done
+
+There is a loading state while new data is being loaded. #Done
+
+User can visit a view where they see all their favourite episodes. #Done
+User can see the associated show and season for episodes in favourites. #Done
+Related episodes are grouped together in favourites. #Done
+
+User can remove episodes from their favourites. #Done
+User sees the date and time they added something as a favourite.  #Done
+User can arrange favourites based on title from A-Z. #Done
+User can arrange favourites based on title from Z-A. #Done
+Arrange Favourites by Recently Updated #Done
+User can arrange favourites starting with the most recently updated. #Done
+Arrange Favourites by Oldest Updated #Done
+User can arrange favourites starting with the oldest updated. #Done
+
+
+User can arrange lists of shows based on title from A-Z. #Done
+
+User can arrange lists of shows based on title from Z-A.  #Done
+
+User can arrange the list showing the most recently updated shows.   #Done
+
+User can arrange the list of shows from least recently updated.    #Done
+
+User can filter shows by genre.  #Done
+
