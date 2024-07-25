@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function NavBar({ onSelectGenre, setSearchQuery }) {
   const genres = [
@@ -16,12 +17,13 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
   return (
     <div className="bg-gray-800 text-white p-4">
       <div className="flex flex-col sm:items-center sm:space-x-4">
-        <span onClick={() => onSelectGenre(null)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">Home</span>
+        <Link to="/" className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">Home</Link>
         {genres.map((genre) => (
           <span key={genre.id} onClick={() => onSelectGenre(genre.id)} className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">
             {genre.name}
           </span>
         ))}
+        <Link to="/favorites" className="cursor-pointer hover:text-amazon-orange mb-2 sm:mb-0">Favorites</Link>
         <input
           type="text"
           placeholder="Search"

@@ -8,115 +8,63 @@ In the project directory, you can run:
 
 ### `npm start`
 
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-### Todo-List
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
+### `npm test`
 
-Deployed to a custom Netlify URL. #Done
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-Custom icon added in the tab window using realfavicongenerator.net. #Done
+### `npm run build`
 
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
- Show Listings #Done
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-User sees the name of all available shows on the platform. #Done
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-Shows sorted alphabetically when the app loads (default sorting).  #Done
+### `npm run eject`
 
-User can listen to any episode in a season for a show.   #Done
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-User can see a view where only episodes for a specific season are shown.  #Done
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-User can toggle between different seasons for the same show. 
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-User sees preview image of shows when browsing. #Done
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## Learn More
 
-User sees the number of seasons in a show when browsing. #Done
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-User sees a human-readable date for when a show was last updated.  #Done
+To learn React, check out the [React documentation](https://reactjs.org/).
 
+### Code Splitting
 
-User sees genres associated with a show when browsing. #Done
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
+### Analyzing the Bundle Size
 
-User sees a preview image of seasons for a specific show. #Done
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-User sees the number of episodes for a season. #Done
+### Making a Progressive Web App
 
-User can go back to a show view from a season-specific view. #Done
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
- Fetch All Show Data #Done
+### Advanced Configuration
 
-All show data loaded via a fetch call from the API. #Done
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-When viewing a specific show, data is loaded via fetch from individual show endpoint. #Done
+### Deployment
 
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-There is a loading state while initial data is being loaded. #Done
+### `npm run build` fails to minify
 
-
- Loading New Data State #Done
-
-There is a loading state while new data is being loaded. #Done
-
-User can mark specific episodes as favourites.  
- View Favourites
-User can visit a view where they see all their favourite episodes.
-User can see the associated show and season for episodes in favourites.
-Related episodes are grouped together in favourites.
-
-User can remove episodes from their favourites.
-User sees the date and time they added something as a favourite.
-User can arrange favourites based on title from A-Z.
-User can arrange favourites based on title from Z-A.
-Arrange Favourites by Recently Updated
-User can arrange favourites starting with the most recently updated.
-Arrange Favourites by Oldest Updated
-User can arrange favourites starting with the oldest updated.
-
-
-User can arrange lists of shows based on title from A-Z. #Done
-
-User can arrange lists of shows based on title from Z-A.  #Done
-
-User can arrange the list showing the most recently updated shows.   #Done
-
-User can arrange the list of shows from least recently updated.    #Done
-
-Persistent Audio Player
-
-Audio player is always visible so user can listen to episodes while browsing.
-
-Audio player shows listening progress.
-
-User receives a notification to confirm closing the page when audio is playing.
-
-User can filter shows by genre.  #Done
-
-
-Listening Progress
-
-App remembers and shows what episodes user listened to all the way through.
-
-Favourites must be persisted in localStorage.
-
-Reset Progress  
-
-User has the option to reset their entire listening history.
-
-Good Appearance
-
-Easy Navigation
-
-The project is easy to navigate and interact with through a web browser.
-
-The project's commit history shows short and clear commit messages.
-
-Responsive Design
-
-The README file includes a comprehensive introduction to the project, setup 
-
-The project loads and functions without ANY bugs.
-
-Well organized project structure and clean readable code.
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
