@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from './NavBar';
+import FeaturedPodcast from './FeaturedPodcast';
 
 function Podcasts() {
   const [podcasts, setPodcasts] = useState([]);
@@ -62,6 +63,7 @@ function Podcasts() {
   return (
     <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} />
+      {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} />}
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4 text-orange-400">Podcasts</h1>
         <div className="mb-4">
@@ -77,14 +79,14 @@ function Podcasts() {
             <option value="updated-oldest">Least Recently Updated</option>
           </select>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPodcasts.map((podcast) => (
-            <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          {filteredPodcasts.slice(1).map((podcast) => (
+            <div key={podcast.id} className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <Link to={`/podcast/${podcast.id}`}>
                 <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold text-orange-400">{podcast.title}</h2>
-                  <h2 className="text-xl font-semibold text-orange-400">{podcast.genres}</h2>
+                  <h2 className="text-lg  text-orange-400">{podcast.title}</h2>
+                  <h2 className="text-xl  text-orange-400">{podcast.genres}</h2>
                 </div>
               </Link>
             </div>
@@ -96,3 +98,4 @@ function Podcasts() {
 }
 
 export default Podcasts;
+
