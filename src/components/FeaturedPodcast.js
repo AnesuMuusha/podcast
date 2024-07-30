@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function FeaturedPodcast({ podcast }) {
+function FeaturedPodcast({ podcast, genres }) {
+  const getGenreNameById = (id) => {
+    const genre = genres.find((genre) => genre.id === id);
+    return genre ? genre.name : 'Unknown Genre';
+  };
+
   return (
     <div className="relative h-screen-3/4 bg-gray-800">
       <Link to={`/podcast/${podcast.id}`}>
@@ -12,7 +17,9 @@ function FeaturedPodcast({ podcast }) {
         />
         <div className="absolute bottom-0 left-0 p-4 bg-black bg-opacity-50 w-full text-white">
           <h2 className="text-3xl font-bold">{podcast.title}</h2>
-          <p className="text-lg">{podcast.genres.join(', ')}</p>
+          <p className="text-lg">
+            {podcast.genres.map((genreId) => getGenreNameById(genreId)).join(', ')}
+          </p>
         </div>
       </Link>
     </div>
