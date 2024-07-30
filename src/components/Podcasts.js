@@ -10,22 +10,39 @@ function Podcasts() {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [sortOption, setSortOption] = useState('title-asc');
 
-  useEffect(() => {
-    const fetchPodcasts = async () => {
-      try {
-        const response = await fetch("https://podcast-api.netlify.app/shows");
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText} (status code: ${response.status})`);
-        }
-        const data = await response.json();
-        setPodcasts(data);
-        setFilteredPodcasts(data);
-      } catch (error) {
-        console.error('Error fetching podcasts:', error);
-        setError(error.message);
-      }
-    };
+  const genres = [
+    { id: 1, name: 'Personal Growth' },
+    { id: 2, name: 'Investigative Journalism' },
+    { id: 3, name: 'History' },
+    { id: 4, name: 'Comedy' },
+    { id: 5, name: 'Entertainment' },
+    { id: 6, name: 'Business' },
+    { id: 7, name: 'Fiction' },
+    { id: 8, name: 'News' },
+    { id: 9, name: 'Kids and Family' },
+  ];
 
+  const getGenreNameById = (id) => {
+    const genre = genres.find((genre) => genre.id === id);
+    return genre ? genre.name : 'Unknown Genre';
+  };
+
+  const fetchPodcasts = async () => {
+    try {
+      const response = await fetch('https://podcast-api.netlify.app/shows');
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText} (status code: ${response.status})`);
+      }
+      const data = await response.json();
+      setPodcasts(data);
+      setFilteredPodcasts(data);
+    } catch (error) {
+      console.error('Error fetching podcasts:', error);
+      setError(error.message);
+    }
+  };
+
+  useEffect(() => {
     fetchPodcasts();
   }, []);
 
@@ -50,7 +67,7 @@ function Podcasts() {
     }
 
     if (selectedGenre) {
-      setFilteredPodcasts(sortedPodcasts.filter(podcast => podcast.genres.includes(selectedGenre)));
+      setFilteredPodcasts(sortedPodcasts.filter((podcast) => podcast.genres.includes(selectedGenre)));
     } else {
       setFilteredPodcasts(sortedPodcasts);
     }
@@ -63,7 +80,7 @@ function Podcasts() {
   return (
     <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} />
-      {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} />}
+      {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} genres={genres} />}
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4 text-orange-400">Podcasts</h1>
         <div className="mb-4">
@@ -85,8 +102,10 @@ function Podcasts() {
               <Link to={`/podcast/${podcast.id}`}>
                 <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
                 <div className="p-4">
-                  <h2 className="text-lg  text-orange-400">{podcast.title}</h2>
-                  <h2 className="text-xl  text-orange-400">{podcast.genres}</h2>
+                  <h2 className="text-lg text-orange-400">{podcast.title}</h2>
+                  <h3 className="text-md text-orange-300">
+                    {podcast.genres.map((genreId) => getGenreNameById(genreId)).join(', ')}
+                  </h3>
                 </div>
               </Link>
             </div>
@@ -98,4 +117,3 @@ function Podcasts() {
 }
 
 export default Podcasts;
-
