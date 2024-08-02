@@ -28,11 +28,11 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
             type="text"
             placeholder="Search"
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-md p-2 w-full sm:w-auto text-black"
+            className="border border-gray-300 rounded-md p-2 text-black w-full sm:w-64"
           />
           <select
             onChange={handleGenreChange}
-            className="border border-gray-300 rounded-md p-2 text-black w-full sm:w-auto"
+            className="border border-gray-300 rounded-md p-2 text-black w-full sm:w-64"
           >
             <option value="">Select Genre</option>
             {genres.map((genre) => (
@@ -63,7 +63,7 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
         </button>
         <div className="hidden sm:flex space-x-4 mt-2 sm:mt-0">
           <Link to="/" className="hover:text-orange-500">
-            Home
+            Home 🏠
           </Link>
           <Link to="/favorites" className="hover:text-orange-500">
             Favorites ⭐
@@ -73,7 +73,8 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
       {isMenuOpen && (
         <div className="flex flex-col mt-4 sm:hidden">
           <Link to="/" className="hover:text-orange-500 mb-2">
-            Home
+            Home 🏠
+
           </Link>
           <Link to="/favorites" className="hover:text-orange-500 mb-2">
             Favorites ⭐
