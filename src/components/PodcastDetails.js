@@ -86,6 +86,11 @@ function PodcastDetails() {
     }
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   if (error) {
     return <div className="text-red-500 p-4">Error: {error}</div>;
   }
@@ -110,14 +115,16 @@ function PodcastDetails() {
             {isDescriptionExpanded ? 'Show Less' : 'Show More'}
           </span>
         </p>
-        <p className="mt-4 text-white text-sm lg:text-base">Last Updated: {podcast.updated.substring(0, 10)}</p>
+        <p className="mt-4 text-white text-sm lg:text-base">Last Updated: {formatDate(podcast.updated)}</p>
         <button
           onClick={handleToggleFavorite}
           className={`mt-4 ${isFavorite ? 'bg-red-500' : 'bg-orange-500'} text-white p-2 rounded`}
         >
           {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
         </button>
-        <h2 className="text-xl lg:text-2xl font-semibold mt-4 text-orange-400">Seasons</h2>
+        <h2 className="text-xl lg:text-2xl font-semibold mt-4 text-orange-400">
+          Seasons ({podcast.seasons.length})
+        </h2>
         <ul>
           {podcast.seasons.map((season, index) => (
             <li key={index} className="mt-2">
@@ -145,7 +152,8 @@ function PodcastDetails() {
                           ref={el => audioRefs.current[episodeIndex] = el}
                           onTimeUpdate={() => handleTimeUpdate(episodeIndex)}
                           onLoadedMetadata={() => handleLoadedMetadata(episodeIndex)}
-                          className="w-full mt-2 hidden"
+                          controls
+                          className="w-full mt-2"
                         >
                           <source src="https://podcast-api.netlify.app/placeholder-audio.mp3" type="audio/mpeg" />
                           Your browser does not support the audio element.
