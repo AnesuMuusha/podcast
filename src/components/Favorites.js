@@ -2,18 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function Favorites() {
-  const [favorites, setFavorites] = useState([]);
+  const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const [sortOption, setSortOption] = useState('mostRecent');
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      const favoriteIds = JSON.parse(localStorage.getItem('favorites')) || [];
-      const favoritePodcasts = await Promise.all(favoriteIds.map(async (id) => {
-        const response = await fetch(`https://podcast-api.netlify.app/id/${id}`);
-        const data = await response.json();
-        return { ...data, addedDate: new Date().toISOString() }; // Add the current date as addedDate
-      }));
-      setFavorites(favoritePodcasts);
+      const allFavorites = [];
+      for (let key in localStorage) {
+        if (key.startsWith('favorites-')) {
+          const podcastId = key.split('-')[1];
+          const episodeIndexes = JSON.parse(localStorage.getItem(key)) || [];
+          const response = await fetch(`https://podcast-api.netlify.app/id/${podcastId}`);
+          const data = await response.json();
+
+          episodeIndexes.forEach(index => {
+            const season = data.seasons.find(season => season.episodes[index]);
+            const episode = season ? season.episodes[index] : null;
+            if (episode) {
+              allFavorites.push({
+                ...episode,
+                podcastTitle: data.title,
+                podcastId,
+                seasonNumber: data.seasons.indexOf(season) + 1,
+                episodeNumber: index + 1,
+                addedDate: new Date().toISOString(),
+                updated: episode.updated || data.updated,
+                audioUrl: episode.audioUrl || 'https://podcast-api.netlify.app/placeholder-audio.mp3'
+              });
+            }
+          });
+        }
+      }
+      console.log("Fetched favorites:", allFavorites); // Debugging line
+      setFavoriteEpisodes(allFavorites);
     };
 
     fetchFavorites();
@@ -34,12 +55,12 @@ function Favorites() {
     }
   };
 
-  const sortedFavorites = sortFavorites(favorites, sortOption);
+  const sortedFavorites = sortFavorites(favoriteEpisodes, sortOption);
 
   return (
     <div className="bg-gray-800 min-h-screen">
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-orange-400">Favorite Podcasts</h1>
+        <h1 className="text-2xl font-bold mb-4 text-orange-400">Favorite Episodes</h1>
         <div className="mb-4">
           <label htmlFor="sort" className="text-white">Sort by: </label>
           <select
@@ -54,17 +75,20 @@ function Favorites() {
             <option value="titleDesc">Title Z-A</option>
           </select>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedFavorites.map((podcast) => (
-            <div key={podcast.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              <Link to={`/podcast/${podcast.id}`}>
-                <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h2 className="text-xl font-semibold text-orange-400">{podcast.title}</h2>
-                  <p className="text-gray-600">Last Updated: {new Date(podcast.updated).toLocaleDateString()}</p>
-                  <p className="text-gray-600">Added: {new Date(podcast.addedDate).toLocaleDateString()}</p>
-                </div>
+        <div className="grid grid-cols-1 gap-4">
+          {sortedFavorites.map((episode, index) => (
+            <div key={index} className="bg-white shadow-md rounded-lg p-4">
+              <Link to={`/podcast/${episode.podcastId}`} className="block text-lg font-semibold text-orange-400">
+                {episode.podcastTitle}
               </Link>
+              <p className="text-gray-600">Season: {episode.seasonNumber}</p>
+              <p className="text-gray-600">Episode: {episode.episodeNumber}</p>
+              <audio controls className="w-full mt-2">
+                <source src={episode.audioUrl} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+              <p className="text-gray-600 mt-2">Last Updated: {episode.updated ? new Date(episode.updated).toLocaleDateString() : 'N/A'}</p>
+              <p className="text-gray-600">Added: {new Date(episode.addedDate).toLocaleDateString()}</p>
             </div>
           ))}
         </div>
