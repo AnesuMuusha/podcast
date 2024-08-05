@@ -5,10 +5,10 @@ function PodcastDetails() {
   const { id } = useParams();
   const [podcast, setPodcast] = useState(null);
   const [error, setError] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [expandedSeason, setExpandedSeason] = useState(null);
   const [playingEpisode, setPlayingEpisode] = useState(null);
+  const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const audioRefs = useRef([]);
 
   useEffect(() => {
@@ -21,8 +21,8 @@ function PodcastDetails() {
         const data = await response.json();
         setPodcast(data);
 
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        setIsFavorite(favorites.includes(data.id));
+        const storedFavorites = JSON.parse(localStorage.getItem(`favorites-${id}`)) || [];
+        setFavoriteEpisodes(storedFavorites);
       } catch (error) {
         console.error('Error fetching podcast details:', error);
         setError(error.message);
@@ -32,17 +32,24 @@ function PodcastDetails() {
     fetchPodcastDetails();
   }, [id]);
 
-  const handleToggleFavorite = () => {
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-    if (isFavorite) {
-      const updatedFavorites = favorites.filter(favId => favId !== podcast.id);
-      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-      setIsFavorite(false);
+  const handleToggleFavoriteEpisode = (seasonIndex, episodeIndex) => {
+    const episode = {
+      seasonIndex,
+      episodeIndex,
+      podcastTitle: podcast.title,
+    };
+
+    let updatedFavorites;
+    if (favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)) {
+      updatedFavorites = favoriteEpisodes.filter(
+        fav => !(fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)
+      );
     } else {
-      favorites.push(podcast.id);
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-      setIsFavorite(true);
+      updatedFavorites = [...favoriteEpisodes, episode];
     }
+
+    setFavoriteEpisodes(updatedFavorites);
+    localStorage.setItem(`favorites-${id}`, JSON.stringify(updatedFavorites));
   };
 
   const truncateDescription = (description, wordLimit) => {
@@ -116,26 +123,23 @@ function PodcastDetails() {
           </span>
         </p>
         <p className="mt-4 text-white text-sm lg:text-base">Last Updated: {formatDate(podcast.updated)}</p>
-        <button
-          onClick={handleToggleFavorite}
-          className={`mt-4 ${isFavorite ? 'bg-red-500' : 'bg-orange-500'} text-white p-2 rounded`}
-        >
-          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-        </button>
         <h2 className="text-xl lg:text-2xl font-semibold mt-4 text-orange-400">
           Seasons ({podcast.seasons.length})
         </h2>
         <ul>
-          {podcast.seasons.map((season, index) => (
-            <li key={index} className="mt-2">
+          {podcast.seasons.map((season, seasonIndex) => (
+            <li key={seasonIndex} className="mt-2">
               <h3
                 className="text-lg lg:text-xl font-semibold text-white cursor-pointer"
-                onClick={() => handleToggleSeason(index)}
+                onClick={() => handleToggleSeason(seasonIndex)}
               >
-                Season {index + 1}
+                Season {seasonIndex + 1}
                 <h1 className="text-gray-300 text-sm lg:text-base">Episodes: {season.episodes.length}</h1>
               </h3>
-              {expandedSeason === index && (
+              {season.image && (
+                <img src={season.image} alt={`Season ${seasonIndex + 1}`} className="w-1/4 h-32 lg:h-48 object-cover mt-2" />
+              )}
+              {expandedSeason === seasonIndex && (
                 <div>
                   <p className="text-gray-300 text-sm lg:text-base">{season.description}</p>
                   <ul className="ml-4">
@@ -147,6 +151,12 @@ function PodcastDetails() {
                           className="ml-2 p-2 bg-blue-500 text-white rounded"
                         >
                           {playingEpisode === episodeIndex ? 'Pause' : 'Play'}
+                        </button>
+                        <button
+                          onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
+                          className={`ml-2 p-2 ${favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex) ? 'bg-red-500' : 'bg-orange-500'} text-white rounded`}
+                        >
+                          {favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex) ? 'Unfavorite' : 'Favorite'}
                         </button>
                         <audio
                           ref={el => audioRefs.current[episodeIndex] = el}
