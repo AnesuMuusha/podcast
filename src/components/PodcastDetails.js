@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-function PodcastDetails() {
+function PodcastDetails({ onPlayEpisode }) {
   const { id } = useParams();
   const [podcast, setPodcast] = useState(null);
   const [error, setError] = useState(null);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [expandedSeason, setExpandedSeason] = useState(null);
-  const [playingEpisode, setPlayingEpisode] = useState(null);
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
-  const audioRefs = useRef([]);
+  const [fullyListenedEpisodes, setFullyListenedEpisodes] = useState([]);
 
   useEffect(() => {
     const fetchPodcastDetails = async () => {
@@ -23,6 +22,9 @@ function PodcastDetails() {
 
         const storedFavorites = JSON.parse(localStorage.getItem(`favorites-${id}`)) || [];
         setFavoriteEpisodes(storedFavorites);
+
+        const storedFullyListened = JSON.parse(localStorage.getItem(`fullyListened-${id}`)) || [];
+        setFullyListenedEpisodes(storedFullyListened);
       } catch (error) {
         console.error('Error fetching podcast details:', error);
         setError(error.message);
@@ -52,6 +54,40 @@ function PodcastDetails() {
     localStorage.setItem(`favorites-${id}`, JSON.stringify(updatedFavorites));
   };
 
+  const handleEpisodeEnd = (seasonIndex, episodeIndex) => {
+    const episode = {
+      seasonIndex,
+      episodeIndex,
+      podcastId: id,
+    };
+
+    if (!fullyListenedEpisodes.some(ep => ep.seasonIndex === seasonIndex && ep.episodeIndex === episodeIndex)) {
+      const updatedFullyListened = [...fullyListenedEpisodes, episode];
+      setFullyListenedEpisodes(updatedFullyListened);
+      localStorage.setItem(`fullyListened-${id}`, JSON.stringify(updatedFullyListened));
+    }
+  };
+
+  const handlePlayEpisode = (seasonIndex, episodeIndex) => {
+    const episode = {
+      seasonIndex,
+      episodeIndex,
+      podcastId: id,
+      podcastTitle: podcast.title,
+      title: `Season ${seasonIndex + 1} Episode ${episodeIndex + 1}`,
+      audioSrc: "https://podcast-api.netlify.app/placeholder-audio.mp3",
+    };
+
+    onPlayEpisode(episode);
+
+     setTimeout(() => handleEpisodeEnd(seasonIndex, episodeIndex), 3000); // Assume 3 seconds to mark as listened
+  };
+
+  const handleResetListenedHistory = () => {
+    setFullyListenedEpisodes([]);
+    localStorage.removeItem(`fullyListened-${id}`);
+  };
+
   const truncateDescription = (description, wordLimit) => {
     const words = description.split(' ');
     if (words.length > wordLimit) {
@@ -66,31 +102,6 @@ function PodcastDetails() {
 
   const handleToggleSeason = (index) => {
     setExpandedSeason(expandedSeason === index ? null : index);
-  };
-
-  const handlePlayPause = (episodeIndex) => {
-    if (playingEpisode === episodeIndex) {
-      audioRefs.current[episodeIndex].pause();
-      setPlayingEpisode(null);
-    } else {
-      if (playingEpisode !== null) {
-        audioRefs.current[playingEpisode].pause();
-      }
-      audioRefs.current[episodeIndex].play();
-      setPlayingEpisode(episodeIndex);
-    }
-  };
-
-  const handleTimeUpdate = (episodeIndex) => {
-    const currentTime = audioRefs.current[episodeIndex].currentTime;
-    localStorage.setItem(`podcast-${id}-episode-${episodeIndex}`, currentTime);
-  };
-
-  const handleLoadedMetadata = (episodeIndex) => {
-    const savedTime = localStorage.getItem(`podcast-${id}-episode-${episodeIndex}`);
-    if (savedTime) {
-      audioRefs.current[episodeIndex].currentTime = savedTime;
-    }
   };
 
   const formatDate = (dateString) => {
@@ -123,6 +134,12 @@ function PodcastDetails() {
           </span>
         </p>
         <p className="mt-4 text-white text-sm lg:text-base">Last Updated: {formatDate(podcast.updated)}</p>
+        <button
+          onClick={handleResetListenedHistory}
+          className="mt-4 p-2 bg-red-500 text-white rounded"
+        >
+          Reset Listened History
+        </button>
         <h2 className="text-xl lg:text-2xl font-semibold mt-4 text-orange-400">
           Seasons ({podcast.seasons.length})
         </h2>
@@ -147,10 +164,10 @@ function PodcastDetails() {
                       <li key={episodeIndex} className="mb-4 text-gray-300 text-sm lg:text-base">
                         Episode {episodeIndex + 1}
                         <button
-                          onClick={() => handlePlayPause(episodeIndex)}
+                          onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
                           className="ml-2 p-2 bg-blue-500 text-white rounded"
                         >
-                          {playingEpisode === episodeIndex ? 'Pause' : 'Play'}
+                          Play
                         </button>
                         <button
                           onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
@@ -158,16 +175,9 @@ function PodcastDetails() {
                         >
                           {favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex) ? 'Unfavorite' : 'Favorite'}
                         </button>
-                        <audio
-                          ref={el => audioRefs.current[episodeIndex] = el}
-                          onTimeUpdate={() => handleTimeUpdate(episodeIndex)}
-                          onLoadedMetadata={() => handleLoadedMetadata(episodeIndex)}
-                          controls
-                          className="w-full mt-2"
-                        >
-                          <source src="https://podcast-api.netlify.app/placeholder-audio.mp3" type="audio/mpeg" />
-                          Your browser does not support the audio element.
-                        </audio>
+                        {fullyListenedEpisodes.some(ep => ep.seasonIndex === seasonIndex && ep.episodeIndex === episodeIndex) && (
+                          <span className="ml-2 text-green-500">Listened</span>
+                        )}
                       </li>
                     ))}
                   </ul>
