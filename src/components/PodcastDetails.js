@@ -9,9 +9,11 @@ function PodcastDetails({ onPlayEpisode }) {
   const [expandedSeason, setExpandedSeason] = useState(null);
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const [fullyListenedEpisodes, setFullyListenedEpisodes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPodcastDetails = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(`https://podcast-api.netlify.app/id/${id}`);
         if (!response.ok) {
@@ -28,6 +30,8 @@ function PodcastDetails({ onPlayEpisode }) {
       } catch (error) {
         console.error('Error fetching podcast details:', error);
         setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -80,12 +84,22 @@ function PodcastDetails({ onPlayEpisode }) {
 
     onPlayEpisode(episode);
 
-     setTimeout(() => handleEpisodeEnd(seasonIndex, episodeIndex), 3000); // Assume 3 seconds to mark as listened
+    const savedPosition = localStorage.getItem(`playback-${id}-${seasonIndex}-${episodeIndex}`);
+    if (savedPosition) {
+      episode.savedPosition = parseFloat(savedPosition);
+    }
+
+    setTimeout(() => handleEpisodeEnd(seasonIndex, episodeIndex), 3000); // Assume 3 seconds to mark as listened
   };
 
   const handleResetListenedHistory = () => {
     setFullyListenedEpisodes([]);
     localStorage.removeItem(`fullyListened-${id}`);
+    podcast.seasons.forEach((season, seasonIndex) => {
+      season.episodes.forEach((episode, episodeIndex) => {
+        localStorage.removeItem(`playback-${id}-${seasonIndex}-${episodeIndex}`);
+      });
+    });
   };
 
   const truncateDescription = (description, wordLimit) => {
@@ -120,72 +134,90 @@ function PodcastDetails({ onPlayEpisode }) {
   return (
     <div className="bg-gray-800 min-h-screen">
       <div className="container mx-auto p-4 lg:p-8">
-        <h1 className="text-2xl lg:text-4xl font-bold mb-4 text-orange-400">{podcast.title}</h1>
-        <img src={podcast.image} alt={podcast.title} className="w-full h-48 lg:h-96 object-cover" />
-        <p className="mt-4 text-white text-sm lg:text-base">
-          {isDescriptionExpanded
-            ? podcast.description
-            : truncateDescription(podcast.description, 15)}
-          <span
-            onClick={handleToggleDescription}
-            className="text-blue-500 cursor-pointer ml-2"
-          >
-            {isDescriptionExpanded ? 'Show Less' : 'Show More'}
-          </span>
-        </p>
-        <p className="mt-4 text-white text-sm lg:text-base">Last Updated: {formatDate(podcast.updated)}</p>
-        <button
-          onClick={handleResetListenedHistory}
-          className="mt-4 p-2 bg-red-500 text-white rounded"
-        >
-          Reset Listened History
-        </button>
-        <h2 className="text-xl lg:text-2xl font-semibold mt-4 text-orange-400">
-          Seasons ({podcast.seasons.length})
-        </h2>
-        <ul>
-          {podcast.seasons.map((season, seasonIndex) => (
-            <li key={seasonIndex} className="mt-2">
-              <h3
-                className="text-lg lg:text-xl font-semibold text-white cursor-pointer"
-                onClick={() => handleToggleSeason(seasonIndex)}
+        {isLoading ? (
+          <div className="text-orange-400 p-4">Loading...</div>
+        ) : (
+          <>
+            <h1 className="text-2xl lg:text-4xl font-bold mb-4 text-orange-400">
+              {podcast.title} ({podcast.seasons.length} Seasons)
+            </h1>
+            <img src={podcast.image} alt={podcast.title} className="w-full h-48 lg:h-96 object-cover" />
+            <p className="mt-4 text-white text-sm lg:text-base">
+              {isDescriptionExpanded
+                ? podcast.description
+                : truncateDescription(podcast.description, 15)}
+              <span
+                onClick={handleToggleDescription}
+                className="text-blue-500 cursor-pointer ml-2"
               >
-                Season {seasonIndex + 1}
-                <h1 className="text-gray-300 text-sm lg:text-base">Episodes: {season.episodes.length}</h1>
-              </h3>
-              {season.image && (
-                <img src={season.image} alt={`Season ${seasonIndex + 1}`} className="w-1/4 h-32 lg:h-48 object-cover mt-2" />
-              )}
-              {expandedSeason === seasonIndex && (
-                <div>
-                  <p className="text-gray-300 text-sm lg:text-base">{season.description}</p>
-                  <ul className="ml-4">
-                    {season.episodes.map((episode, episodeIndex) => (
-                      <li key={episodeIndex} className="mb-4 text-gray-300 text-sm lg:text-base">
-                        Episode {episodeIndex + 1}
-                        <button
-                          onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
-                          className="ml-2 p-2 bg-blue-500 text-white rounded"
-                        >
-                          Play
-                        </button>
-                        <button
-                          onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
-                          className={`ml-2 p-2 ${favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex) ? 'bg-red-500' : 'bg-orange-500'} text-white rounded`}
-                        >
-                          {favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex) ? 'Unfavorite' : 'Favorite'}
-                        </button>
-                        {fullyListenedEpisodes.some(ep => ep.seasonIndex === seasonIndex && ep.episodeIndex === episodeIndex) && (
-                          <span className="ml-2 text-green-500">Listened</span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
+                {isDescriptionExpanded ? 'Show Less' : 'Show More'}
+              </span>
+            </p>
+            <button
+              onClick={handleResetListenedHistory}
+              className="mt-4 bg-orange-500 text-white p-2 rounded"
+            >
+              Reset Listened History
+            </button>
+            <div className="mt-8">
+              {podcast.seasons.map((season, seasonIndex) => (
+                <div key={seasonIndex} className="mb-6">
+                  <h2
+                    className="text-xl font-semibold cursor-pointer text-orange-400"
+                    onClick={() => handleToggleSeason(seasonIndex)}
+                  >
+                    Season {seasonIndex + 1} ({season.episodes.length} Episodes)
+                  </h2>
+                  {expandedSeason === seasonIndex && (
+                    <div>
+                      <img src={season.image} alt={`Season ${seasonIndex + 1}`} className="w-full h-48 object-cover mt-4 mb-4" />
+                      <ul className="mt-4 space-y-4">
+                        {season.episodes.map((episode, episodeIndex) => {
+                          const isFavorite = favoriteEpisodes.some(
+                            (fav) => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex
+                          );
+                          const isListened = fullyListenedEpisodes.some(
+                            (ep) => ep.seasonIndex === seasonIndex && ep.episodeIndex === episodeIndex
+                          );
+
+                          return (
+                            <li key={episodeIndex} className="bg-gray-900 p-4 rounded shadow">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h3 className="text-lg text-white">
+                                    Episode {episodeIndex + 1}: {episode.title}
+                                  </h3>
+                                  <p className="text-sm text-gray-400">{formatDate(episode.date)}</p>
+                                </div>
+                                <div className="flex items-center">
+                                  <button
+                                    onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
+                                    className={`ml-2 p-2 rounded ${isFavorite ? 'bg-yellow-500' : 'bg-orange-400'}`}
+                                  >
+                                    {isFavorite ? 'Unfavorite' : 'Favorite'}
+                                  </button>
+                                  <button
+                                    onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
+                                    className="ml-4 p-2 bg-blue-500 text-white rounded"
+                                  >
+                                    Play
+                                  </button>
+                                  {isListened && (
+                                    <span className="ml-2 text-orange-400">Listened</span>
+                                  )}
+                                </div>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              )}
-            </li>
-          ))}
-        </ul>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
