@@ -12,6 +12,7 @@ function Podcasts() {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [sortOption, setSortOption] = useState('title-asc');
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [isLoading, setIsLoading] = useState(true); // State for loading
 
   const genres = [
     { id: 1, name: 'Personal Growth' },
@@ -31,6 +32,7 @@ function Podcasts() {
   };
 
   const fetchPodcasts = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('https://podcast-api.netlify.app/shows');
       if (!response.ok) {
@@ -42,6 +44,8 @@ function Podcasts() {
     } catch (error) {
       console.error('Error fetching podcasts:', error);
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,12 +77,11 @@ function Podcasts() {
       sortedPodcasts = sortedPodcasts.filter((podcast) => podcast.genres.includes(selectedGenre));
     }
 
-    // Fuzzy search implementation
     if (searchQuery) {
       const fuse = new Fuse(sortedPodcasts, {
-        keys: ['title', 'description'], // Specify the fields to search in
+        keys: ['title', 'description'], 
         includeScore: true,
-        threshold: 0.4, // Adjust the threshold for fuzziness
+        threshold: 0.4,
       });
       const results = fuse.search(searchQuery);
       setFilteredPodcasts(results.map(result => result.item));
@@ -86,7 +89,7 @@ function Podcasts() {
       setFilteredPodcasts(sortedPodcasts);
     }
 
-  }, [sortOption, selectedGenre, podcasts, searchQuery]); // Add searchQuery to dependencies
+  }, [sortOption, selectedGenre, podcasts, searchQuery]); 
 
   const getRandomPodcasts = (podcasts, count) => {
     const shuffled = podcasts.sort(() => 0.5 - Math.random());
@@ -126,14 +129,59 @@ function Podcasts() {
   return (
     <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} />
-      {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} genres={genres} />}
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-orange-400">You might be interested in</h1>
-        {podcasts.length > 0 && (
-          <Slider {...settings}>
-            {getRandomPodcasts(podcasts, 6).map((podcast) => (
-              <div key={podcast.id} className="p-2">
-                <div className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      {isLoading ? (
+        <div className="text-orange-400 p-4">Loading...</div>
+      ) : (
+        <>
+          {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} genres={genres} />}
+          <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-4 text-orange-400">You might be interested in</h1>
+            {podcasts.length > 0 && (
+              <Slider {...settings}>
+                {getRandomPodcasts(podcasts, 6).map((podcast) => (
+                  <div key={podcast.id} className="p-2">
+                    <div className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                      <Link to={`/podcast/${podcast.id}`}>
+                        <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
+                        <div className="p-4">
+                          <h2 className="text-lg text-orange-400">{podcast.title}</h2>
+                          <h3 className="text-md text-orange-300">
+                            {podcast.genres.map((genreId) => getGenreNameById(genreId)).join(', ')}
+                          </h3>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
+            )}
+            <div className="mb-4 mt-8">
+              <label className="text-white mr-2">Search:</label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="p-2 rounded-md"
+                placeholder="Search for podcasts..."
+              />
+            </div>
+            <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
+            <div className="mb-4">
+              <label className="text-white mr-2">Sort by:</label>
+              <select 
+                value={sortOption} 
+                onChange={(e) => setSortOption(e.target.value)} 
+                className="p-2 rounded-md"
+              >
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+                <option value="updated-recent">Most Recently Updated</option>
+                <option value="updated-oldest">Least Recently Updated</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              {filteredPodcasts.slice(1).map((podcast) => (
+                <div key={podcast.id} className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <Link to={`/podcast/${podcast.id}`}>
                     <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
                     <div className="p-4">
@@ -144,50 +192,11 @@ function Podcasts() {
                     </div>
                   </Link>
                 </div>
-              </div>
-            ))}
-          </Slider>
-        )}
-        <div className="mb-4 mt-8">
-          <label className="text-white mr-2">Search:</label>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="p-2 rounded-md"
-            placeholder="Search for podcasts..."
-          />
-        </div>
-        <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
-        <div className="mb-4">
-          <label className="text-white mr-2">Sort by:</label>
-          <select 
-            value={sortOption} 
-            onChange={(e) => setSortOption(e.target.value)} 
-            className="p-2 rounded-md"
-          >
-            <option value="title-asc">Title (A-Z)</option>
-            <option value="title-desc">Title (Z-A)</option>
-            <option value="updated-recent">Most Recently Updated</option>
-            <option value="updated-oldest">Least Recently Updated</option>
-          </select>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          {filteredPodcasts.slice(1).map((podcast) => (
-            <div key={podcast.id} className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              <Link to={`/podcast/${podcast.id}`}>
-                <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />
-                <div className="p-4">
-                  <h2 className="text-lg text-orange-400">{podcast.title}</h2>
-                  <h3 className="text-md text-orange-300">
-                    {podcast.genres.map((genreId) => getGenreNameById(genreId)).join(', ')}
-                  </h3>
-                </div>
-              </Link>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
