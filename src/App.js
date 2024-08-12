@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import PodcastDetails from './components/PodcastDetails';
-import Favorites from './components/Favorites';
 import GlobalAudioPlayer from './components/GlobalAudioPlayer';
+import Favorite from './components/Favorite';
 
 function App() {
   const [playingEpisode, setPlayingEpisode] = useState(null);
@@ -35,7 +35,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/podcast/:id" element={<PodcastDetails onPlayEpisode={handlePlayEpisode} />} />
-        <Route path="/favorites" element={<Favorites />} />
+        
+        <Route path="/favorite" element={<Favorite />} />  
       </Routes>
       <GlobalAudioPlayer
         playingEpisode={playingEpisode}
