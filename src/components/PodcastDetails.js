@@ -23,6 +23,7 @@ function PodcastDetails({ onPlayEpisode }) {
         setPodcast(data);
 
         const storedFavorites = JSON.parse(localStorage.getItem(`favorites-${id}`)) || [];
+        console.log('Fetched favorites:', storedFavorites);
         setFavoriteEpisodes(storedFavorites);
 
         const storedFullyListened = JSON.parse(localStorage.getItem(`fullyListened-${id}`)) || [];
@@ -39,24 +40,33 @@ function PodcastDetails({ onPlayEpisode }) {
   }, [id]);
 
   const handleToggleFavoriteEpisode = (seasonIndex, episodeIndex) => {
-    const episode = {
-      seasonIndex,
-      episodeIndex,
-      podcastTitle: podcast.title,
-    };
-
+    const existingFavorite = favoriteEpisodes.find(
+      (fav) => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex
+    );
+  
     let updatedFavorites;
-    if (favoriteEpisodes.some(fav => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)) {
+    if (existingFavorite) {
+      // If the episode is already a favorite, remove it
       updatedFavorites = favoriteEpisodes.filter(
-        fav => !(fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)
+        (fav) => !(fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)
       );
     } else {
+
+      const episode = {
+        seasonIndex,
+        episodeIndex,
+        podcastTitle: podcast.title,
+        podcastId: id,
+        addedAt: new Date().toLocaleString(), 
+      };
       updatedFavorites = [...favoriteEpisodes, episode];
     }
-
+  
     setFavoriteEpisodes(updatedFavorites);
     localStorage.setItem(`favorites-${id}`, JSON.stringify(updatedFavorites));
+    console.log('Updated favorites:', updatedFavorites);
   };
+  
 
   const handleEpisodeEnd = (seasonIndex, episodeIndex) => {
     const episode = {

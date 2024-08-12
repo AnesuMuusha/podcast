@@ -65,7 +65,8 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
           <Link to="/" className="hover:text-orange-500">
             Home 🏠
           </Link>
-          <Link to="/favorites" className="hover:text-orange-500">
+          
+          <Link to="/favorite" className="hover:text-orange-500 mb-2">
             Favorites ⭐
           </Link>
         </div>
@@ -76,7 +77,8 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
             Home 🏠
 
           </Link>
-          <Link to="/favorites" className="hover:text-orange-500 mb-2">
+        
+          <Link to="/favorite" className="hover:text-orange-500 mb-2">
             Favorites ⭐
           </Link>
         </div>
