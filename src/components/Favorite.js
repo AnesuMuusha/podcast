@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Favorite() {
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
@@ -7,10 +7,9 @@ function Favorite() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     fetchFavorites();
-  }, []); 
+  }, []);
 
   const fetchFavorites = async () => {
     const storedFavorites = [];
@@ -107,13 +106,19 @@ function Favorite() {
         ) : (
           <>
             <div className="mb-4 flex space-x-2">
-            <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
-              <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
-              <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
-              <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+              >
+                <option value="title-asc">Title A-Z</option>
+                <option value="title-desc">Title Z-A</option>
+                <option value="updated-recent">Most Recently Updated</option>
+                <option value="updated-oldest">Oldest Updated</option>
+              </select>
             </div>
 
-            <ul className=" grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {favoriteEpisodes.length > 0 ? (
                 favoriteEpisodes.map((favorite, index) => (
                   <li key={index} className="bg-gray-700 p-4 rounded shadow">
