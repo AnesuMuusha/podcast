@@ -43,12 +43,10 @@ function Favorite() {
       }
     }
 
-    // Set state after all data has been processed
     setFavoriteEpisodes(storedFavorites);
     setLoading(false);
   };
 
-  // Sort favorites based on selected option
   const sortFavorites = useCallback(() => {
     if (!favoriteEpisodes.length) return;
 
@@ -73,7 +71,6 @@ function Favorite() {
     setFavoriteEpisodes(sortedFavorites);
   }, [favoriteEpisodes, sortOption]);
 
-  // Sort whenever sortOption or favoriteEpisodes changes
   useEffect(() => {
     sortFavorites();
   }, [sortOption, sortFavorites]);
@@ -92,7 +89,7 @@ function Favorite() {
       localStorage.removeItem(key);
     }
 
-    fetchFavorites(); // Fetch the favorites again after removal
+    fetchFavorites();
   };
 
   const handleGoToPodcast = (podcastId) => {
@@ -103,20 +100,20 @@ function Favorite() {
   return (
     <div className="bg-gray-800 min-h-screen">
       <div className="container mx-auto p-4 lg:p-8">
-        <h1 className="text-2xl lg:text-4xl font-bold mb-4 text-orange-400">Favorite Episodes</h1>
+        <h1 className="text-2xl lg:text-4xl mb-4 bg-gray-600 text-white py-2 px-4 rounded-full">Favorite Episodes</h1>
 
         {loading ? (
           <div className="text-white">Loading...</div>
         ) : (
           <>
             <div className="mb-4 flex space-x-2">
-              <button onClick={() => setSortOption('title-asc')} className="text-orange-400">Title A-Z</button>
-              <button onClick={() => setSortOption('title-desc')} className="text-orange-400">Title Z-A</button>
-              <button onClick={() => setSortOption('updated-recent')} className="text-orange-400">Most Recently Updated</button>
-              <button onClick={() => setSortOption('updated-oldest')} className="text-orange-400">Oldest Updated</button>
+            <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
+              <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
+              <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
+              <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
             </div>
 
-            <ul className="space-y-4">
+            <ul className=" grid grid-cols-1 lg:grid-cols-2 gap-4">
               {favoriteEpisodes.length > 0 ? (
                 favoriteEpisodes.map((favorite, index) => (
                   <li key={index} className="bg-gray-700 p-4 rounded shadow">

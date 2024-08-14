@@ -23,13 +23,11 @@ function PodcastDetails({ onPlayEpisode }) {
         setPodcast(data);
 
         const storedFavorites = JSON.parse(localStorage.getItem(`favorites-${id}`)) || [];
-        console.log('Fetched favorites:', storedFavorites);
         setFavoriteEpisodes(storedFavorites);
 
         const storedFullyListened = JSON.parse(localStorage.getItem(`fullyListened-${id}`)) || [];
         setFullyListenedEpisodes(storedFullyListened);
       } catch (error) {
-        console.error('Error fetching podcast details:', error);
         setError(error.message);
       } finally {
         setIsLoading(false);
@@ -43,30 +41,26 @@ function PodcastDetails({ onPlayEpisode }) {
     const existingFavorite = favoriteEpisodes.find(
       (fav) => fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex
     );
-  
+
     let updatedFavorites;
     if (existingFavorite) {
-      // If the episode is already a favorite, remove it
       updatedFavorites = favoriteEpisodes.filter(
         (fav) => !(fav.seasonIndex === seasonIndex && fav.episodeIndex === episodeIndex)
       );
     } else {
-
       const episode = {
         seasonIndex,
         episodeIndex,
         podcastTitle: podcast.title,
         podcastId: id,
-        addedAt: new Date().toLocaleString(), 
+        addedAt: new Date().toLocaleString(),
       };
       updatedFavorites = [...favoriteEpisodes, episode];
     }
-  
+
     setFavoriteEpisodes(updatedFavorites);
     localStorage.setItem(`favorites-${id}`, JSON.stringify(updatedFavorites));
-    console.log('Updated favorites:', updatedFavorites);
   };
-  
 
   const handleEpisodeEnd = (seasonIndex, episodeIndex) => {
     const episode = {
@@ -142,30 +136,37 @@ function PodcastDetails({ onPlayEpisode }) {
   }
 
   return (
-    <div className="bg-gray-800 min-h-screen">
+    <div className="bg-gradient-to-b from-gray-500 to-gray-900 min-h-screen">
       <div className="container mx-auto p-4 lg:p-8">
         {isLoading ? (
           <div className="text-orange-400 p-4">Loading...</div>
         ) : (
           <>
-            <h1 className="text-2xl lg:text-4xl font-bold mb-4 text-orange-400">
-              {podcast.title} ({podcast.seasons.length} Seasons)
-            </h1>
-            <img src={podcast.image} alt={podcast.title} className="w-full h-48 lg:h-96 object-cover" />
+            <div className="flex items-center space-x-4">
+              <img src={podcast.image} alt={podcast.title} className="w-40 h-1/4 lg:h40 object-cover shadow-lg  rounded" />
+              <div>
+               
+              <h1 className="text-2xl lg:text-4xl font-bold text-orange-400">
+                {podcast.title} 
+              </h1>
+              <h1 className="text-xl lg:text-2xl text-orange-400">{podcast.seasons.length} Seasons</h1>
+            </div>
+            </div>
+            <h1 className="pt-4 text-xl lg:text-2xl font-bold text-orange-400">About</h1>
             <p className="mt-4 text-white text-sm lg:text-base">
               {isDescriptionExpanded
                 ? podcast.description
                 : truncateDescription(podcast.description, 15)}
               <span
                 onClick={handleToggleDescription}
-                className="text-blue-500 cursor-pointer ml-2"
+                className="text-orange-400 cursor-pointer ml-2"
               >
                 {isDescriptionExpanded ? 'Show Less' : 'Show More'}
               </span>
             </p>
             <button
               onClick={handleResetListenedHistory}
-              className="mt-4 bg-orange-500 text-white p-2 rounded"
+              className="mt-4 bg-orange-400 text-white p-2 rounded-full"
             >
               Reset Listened History
             </button>
@@ -180,7 +181,7 @@ function PodcastDetails({ onPlayEpisode }) {
                   </h2>
                   {expandedSeason === seasonIndex && (
                     <div>
-                      <img src={season.image} alt={`Season ${seasonIndex + 1}`} className="w-full h-48 object-cover mt-4 mb-4" />
+                      <img src={season.image} alt={`Season ${seasonIndex + 1}`} className="w-40 h-1/4 lg:h40 object-cover mt-4 mb-4 shadow-lg rounded" />
                       <ul className="mt-4 space-y-4">
                         {season.episodes.map((episode, episodeIndex) => {
                           const isFavorite = favoriteEpisodes.some(
@@ -191,7 +192,7 @@ function PodcastDetails({ onPlayEpisode }) {
                           );
 
                           return (
-                            <li key={episodeIndex} className="bg-gray-900 p-4 rounded shadow">
+                            <li key={episodeIndex} className="bg-gray-800 p-4 rounded shadow">
                               <div className="flex items-center justify-between">
                                 <div>
                                   <h3 className="text-lg text-white">
@@ -202,13 +203,13 @@ function PodcastDetails({ onPlayEpisode }) {
                                 <div className="flex items-center">
                                   <button
                                     onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
-                                    className={`ml-2 p-2 rounded ${isFavorite ? 'bg-yellow-500' : 'bg-orange-400'}`}
+                                    className={`ml-2 p-2 rounded-full ${isFavorite ? 'bg-yellow-500' : 'bg-orange-400'}`}
                                   >
                                     {isFavorite ? 'Unfavorite' : 'Favorite'}
                                   </button>
                                   <button
                                     onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
-                                    className="ml-4 p-2 bg-blue-500 text-white rounded"
+                                    className="ml-4 p-2 bg-orange-400 text-white rounded-full"
                                   >
                                     Play
                                   </button>
