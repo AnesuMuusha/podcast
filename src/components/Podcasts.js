@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
-import Fuse from 'fuse.js'; 
+import Fuse from 'fuse.js';
 import NavBar from './NavBar';
-import FeaturedPodcast from './FeaturedPodcast';
 
 function Podcasts() {
   const [podcasts, setPodcasts] = useState([]);
@@ -11,8 +10,8 @@ function Podcasts() {
   const [error, setError] = useState(null);
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [sortOption, setSortOption] = useState('title-asc');
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const [isLoading, setIsLoading] = useState(true); // State for loading
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const genres = [
     { id: 1, name: 'Personal Growth' },
@@ -79,17 +78,16 @@ function Podcasts() {
 
     if (searchQuery) {
       const fuse = new Fuse(sortedPodcasts, {
-        keys: ['title', 'description'], 
+        keys: ['title', 'description'],
         includeScore: true,
         threshold: 0.4,
       });
       const results = fuse.search(searchQuery);
-      setFilteredPodcasts(results.map(result => result.item));
+      setFilteredPodcasts(results.map((result) => result.item));
     } else {
       setFilteredPodcasts(sortedPodcasts);
     }
-
-  }, [sortOption, selectedGenre, podcasts, searchQuery]); 
+  }, [sortOption, selectedGenre, podcasts, searchQuery]);
 
   const getRandomPodcasts = (podcasts, count) => {
     const shuffled = podcasts.sort(() => 0.5 - Math.random());
@@ -109,17 +107,17 @@ function Podcasts() {
           slidesToShow: 2,
           slidesToScroll: 2,
           infinite: true,
-          dots: true
-        }
+          dots: true,
+        },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-        }
+        },
       },
-    ]
+    ],
   };
 
   if (error) {
@@ -130,12 +128,11 @@ function Podcasts() {
     <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} />
       {isLoading ? (
-        <div className="text-orange-400 p-4">Loading...</div>
+        <div className="text-orange-400 p-4 animate-pulse">Loading...</div>
       ) : (
         <>
-          {podcasts.length > 0 && <FeaturedPodcast podcast={podcasts[0]} genres={genres} />}
           <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4 text-orange-400">You might be interested in</h1>
+            {/* <h1 className="text-2xl font-bold mb-4 text-orange-400">You might be interested in</h1> */}
             {podcasts.length > 0 && (
               <Slider {...settings}>
                 {getRandomPodcasts(podcasts, 6).map((podcast) => (
@@ -155,32 +152,26 @@ function Podcasts() {
                 ))}
               </Slider>
             )}
-            <div className="mb-4 mt-8">
-              <label className="text-white mr-2">Search:</label>
+
+            <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
+            <div className="mb-4 flex space-x-2">
+              <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
+              <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
+              <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
+              <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
+            </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="p-2 rounded-md"
+                className="p-2 mb-2 bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
                 placeholder="Search for podcasts..."
               />
-            </div>
-            <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
-            <div className="mb-4">
-              <label className="text-white mr-2">Sort by:</label>
-              <select 
-                value={sortOption} 
-                onChange={(e) => setSortOption(e.target.value)} 
-                className="p-2 rounded-md"
-              >
-                <option value="title-asc">Title (A-Z)</option>
-                <option value="title-desc">Title (Z-A)</option>
-                <option value="updated-recent">Most Recently Updated</option>
-                <option value="updated-oldest">Least Recently Updated</option>
-              </select>
+            <div className="mb-4 mt-8">
+              
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-              {filteredPodcasts.slice(1).map((podcast) => (
+              {filteredPodcasts.map((podcast) => (
                 <div key={podcast.id} className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <Link to={`/podcast/${podcast.id}`}>
                     <img src={podcast.image} alt={podcast.title} className="w-full h-48 object-cover" />

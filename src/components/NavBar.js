@@ -21,18 +21,13 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
   };
 
   return (
-    <div className="bg-gray-800 text-white p-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
-          <input
-            type="text"
-            placeholder="Search"
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-md p-2 text-black w-full sm:w-64"
-          />
+    <nav className="bg-gray-800 text-white p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+         
           <select
             onChange={handleGenreChange}
-            className="border border-gray-300 rounded-md p-2 text-black w-full sm:w-64"
+            className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500 sm:w-64"
           >
             <option value="">Select Genre</option>
             {genres.map((genre) => (
@@ -44,7 +39,7 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
         </div>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="sm:hidden focus:outline-none mt-2 sm:mt-0"
+          className="sm:hidden focus:outline-none"
         >
           <svg
             className="w-6 h-6"
@@ -61,29 +56,27 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
             ></path>
           </svg>
         </button>
-        <div className="hidden sm:flex space-x-4 mt-2 sm:mt-0">
-          <Link to="/" className="hover:text-orange-500">
+        <div className="hidden sm:flex space-x-4">
+          <Link to="/" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
             Home 🏠
           </Link>
-          
-          <Link to="/favorite" className="hover:text-orange-500 mb-2">
+
+          <Link to="/favorite" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
             Favorites ⭐
           </Link>
         </div>
       </div>
       {isMenuOpen && (
         <div className="flex flex-col mt-4 sm:hidden">
-          <Link to="/" className="hover:text-orange-500 mb-2">
+          <Link to="/" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
             Home 🏠
-
           </Link>
-        
-          <Link to="/favorite" className="hover:text-orange-500 mb-2">
+          <Link to="/favorite" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
             Favorites ⭐
           </Link>
         </div>
       )}
-    </div>
+    </nav>
   );
 }
 
