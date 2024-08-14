@@ -68,7 +68,7 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
       </div>
       {isMenuOpen && (
         <div className="flex flex-col mt-4 sm:hidden">
-          <Link to="/" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
+          <Link to="/" className="bg-gray-600 text-white mb-2 py-2 px-4 rounded-full hover:bg-gray-500">
             Home 🏠
           </Link>
           <Link to="/favorite" className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">
