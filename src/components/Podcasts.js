@@ -126,13 +126,12 @@ function Podcasts() {
 
   return (
     <div className="bg-gray-800 min-h-screen">
-      <NavBar onSelectGenre={setSelectedGenre} />
+      <NavBar onSelectGenre={setSelectedGenre} setSearchQuery={setSearchQuery} />
       {isLoading ? (
         <div className="text-orange-400 p-4 animate-pulse">Loading...</div>
       ) : (
         <>
           <div className="container mx-auto p-4">
-            {/* <h1 className="text-2xl font-bold mb-4 text-orange-400">You might be interested in</h1> */}
             {podcasts.length > 0 && (
               <Slider {...settings}>
                 {getRandomPodcasts(podcasts, 6).map((podcast) => (
@@ -155,21 +154,26 @@ function Podcasts() {
 
             <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
             <div className="mb-4 flex space-x-2">
-              <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
-              <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
-              <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
-              <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
-            </div>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+              >
+                <option value="title-asc">Sort by Title A-Z</option>
+                <option value="title-desc">Sort by Title Z-A</option>
+                <option value="updated-recent">Sort by Most Recently Updated</option>
+                <option value="updated-oldest">Sort by Oldest Updated</option>
+              </select>
+              
+            </div >
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="p-2 mb-2 bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+                className="mb-2 bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
                 placeholder="Search for podcasts..."
               />
-            <div className="mb-4 mt-8">
-              
-            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               {filteredPodcasts.map((podcast) => (
                 <div key={podcast.id} className="bg-gray-700 shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
