@@ -145,12 +145,14 @@ function PodcastDetails({ onPlayEpisode }) {
             <div className="flex items-center space-x-4">
               <img src={podcast.image} alt={podcast.title} className="w-40 h-1/4 lg:h40 object-cover shadow-lg  rounded" />
               <div>
-               
-              <h1 className="text-2xl lg:text-4xl font-bold text-orange-400">
-                {podcast.title} 
-              </h1>
-              <h1 className="text-xl lg:text-2xl text-orange-400">{podcast.seasons.length} Seasons</h1>
-            </div>
+                <h1 className="text-2xl lg:text-4xl font-bold text-orange-400">
+                  {podcast.title} 
+                </h1>
+                <h1 className="text-xl lg:text-2xl text-orange-400">{podcast.seasons.length} Seasons</h1>
+                <p className="text-gray-400 text-sm mt-2">
+                  Last Updated: {podcast.updated ? formatDate(podcast.updated) : 'N/A'}
+                </p>
+              </div>
             </div>
             <h1 className="pt-4 text-xl lg:text-2xl font-bold text-orange-400">About</h1>
             <p className="mt-4 text-white text-sm lg:text-base">
@@ -198,8 +200,7 @@ function PodcastDetails({ onPlayEpisode }) {
                                   <h3 className="text-lg text-white">
                                     Episode {episodeIndex + 1}: {episode.title}
                                   </h3>
-                                  <p className="text-sm text-gray-400">{formatDate(episode.date)}</p>
-                                </div>
+              </div>
                                 <div className="flex items-center">
                                   <button
                                     onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
@@ -209,13 +210,10 @@ function PodcastDetails({ onPlayEpisode }) {
                                   </button>
                                   <button
                                     onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
-                                    className="ml-4 p-2 bg-orange-400 text-white rounded-full"
+                                    className="ml-2 p-2 bg-blue-500 text-white rounded-full"
                                   >
-                                    Play
+                                    {isListened ? 'Re-listen' : 'Play'}
                                   </button>
-                                  {isListened && (
-                                    <span className="ml-2 text-orange-400">Listened</span>
-                                  )}
                                 </div>
                               </div>
                             </li>

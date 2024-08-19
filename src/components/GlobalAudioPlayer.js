@@ -4,8 +4,8 @@ function GlobalAudioPlayer({ playingEpisode, onPlayPause, onTimeUpdate, onLoaded
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1); 
-  
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+
   useEffect(() => {
     if (playingEpisode && audioRef.current) {
       const playAudio = async () => {
@@ -61,11 +61,16 @@ function GlobalAudioPlayer({ playingEpisode, onPlayPause, onTimeUpdate, onLoaded
     }
   };
 
+  const handleEnded = () => {
+    setIsPlaying(false);
+    onPlayPause(false);
+  };
+
   return (
     <div className="fixed bottom-0 left-0 w-full bg-gray-900 p-4 flex justify-between items-center">
       {playingEpisode ? (
         <>
-          <div className=" text-white">
+          <div className="text-white">
             <h3>{playingEpisode.title}</h3>
             <p>{playingEpisode.podcastTitle}</p>
             <div>
@@ -90,6 +95,7 @@ function GlobalAudioPlayer({ playingEpisode, onPlayPause, onTimeUpdate, onLoaded
               ref={audioRef}
               onTimeUpdate={handleTimeUpdate}
               onLoadedMetadata={onLoadedMetadata}
+              onEnded={handleEnded}
               className="hidden"
               src={playingEpisode.audioSrc}
             />

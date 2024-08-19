@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Favorite() {
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const [sortOption, setSortOption] = useState('title-asc');
   const [loading, setLoading] = useState(true);
+  const [removing, setRemoving] = useState({}); // State to track which item is being removed
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     fetchFavorites();
-  }, []); 
+  }, []);
 
   const fetchFavorites = async () => {
     const storedFavorites = [];
@@ -27,13 +27,19 @@ function Favorite() {
           const episode = season ? season.episodes[favorite.episodeIndex] : null;
 
           if (episode) {
+            const addedAt = favorite.addedAt || new Date().toISOString(); // Set current date if missing
+
+            // Update localStorage to ensure consistency
+            favorite.addedAt = addedAt;
+            localStorage.setItem(key, JSON.stringify(favorites));
+
             storedFavorites.push({
               ...episode,
               podcastTitle: data.title,
               podcastId,
               seasonIndex: favorite.seasonIndex,
               episodeIndex: favorite.episodeIndex,
-              addedAt: favorite.addedAt || new Date().toISOString(),
+              addedAt,
               updated: data.updated || episode.updated,
             });
           } else {
@@ -75,13 +81,21 @@ function Favorite() {
     sortFavorites();
   }, [sortOption, sortFavorites]);
 
-  const removeFavorite = (podcastId, seasonIndex, episodeIndex) => {
+  const removeFavorite = async (podcastId, seasonIndex, episodeIndex) => {
     const key = `favorites-${podcastId}`;
     const storedFavorites = JSON.parse(localStorage.getItem(key)) || [];
+
+    // Track which item is being removed
+    setRemoving((prev) => ({
+      ...prev,
+      [`${podcastId}-${seasonIndex}-${episodeIndex}`]: true,
+    }));
 
     const updatedFavorites = storedFavorites.filter(
       (fav) => fav.seasonIndex !== seasonIndex || fav.episodeIndex !== episodeIndex
     );
+
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
 
     if (updatedFavorites.length > 0) {
       localStorage.setItem(key, JSON.stringify(updatedFavorites));
@@ -107,13 +121,13 @@ function Favorite() {
         ) : (
           <>
             <div className="mb-4 flex space-x-2">
-            <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
+              <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
               <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
               <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
               <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
             </div>
 
-            <ul className=" grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {favoriteEpisodes.length > 0 ? (
                 favoriteEpisodes.map((favorite, index) => (
                   <li key={index} className="bg-gray-700 p-4 rounded shadow">
@@ -123,11 +137,12 @@ function Favorite() {
                         <p className="text-white">
                           Season {favorite.seasonIndex + 1}, Episode {favorite.episodeIndex + 1}
                         </p>
+             
                         <p className="text-gray-400 text-sm">
-                          Added on: {favorite.addedAt ? new Date(favorite.addedAt).toLocaleDateString() : 'N/A'}
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          Last Updated: {favorite.updated ? new Date(favorite.updated).toLocaleDateString() : 'N/A'}
+  Added on: {new Date().toLocaleDateString()}
+</p>
+           <p className="text-gray-400 text-sm">
+                          Last Updated: {new Date(favorite.updated).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="flex items-center space-x-4">
@@ -140,8 +155,9 @@ function Favorite() {
                         <button
                           onClick={() => removeFavorite(favorite.podcastId, favorite.seasonIndex, favorite.episodeIndex)}
                           className="text-orange-500 hover:text-orange-700"
+                          disabled={removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`]}
                         >
-                          Remove
+                          {removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`] ? 'Removing...' : 'Remove'}
                         </button>
                       </div>
                     </div>
