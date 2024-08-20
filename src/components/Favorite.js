@@ -5,7 +5,7 @@ function Favorite() {
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
   const [sortOption, setSortOption] = useState('title-asc');
   const [loading, setLoading] = useState(true);
-  const [removing, setRemoving] = useState({}); // State to track which item is being removed
+  const [removing, setRemoving] = useState({}); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -121,10 +121,16 @@ function Favorite() {
         ) : (
           <>
             <div className="mb-4 flex space-x-2">
-              <button onClick={() => setSortOption('title-asc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title A-Z</button>
-              <button onClick={() => setSortOption('title-desc')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Title Z-A</button>
-              <button onClick={() => setSortOption('updated-recent')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Most Recently Updated</button>
-              <button onClick={() => setSortOption('updated-oldest')} className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500">Oldest Updated</button>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+              >
+                <option value="title-asc">Sort by Title A-Z</option>
+                <option value="title-desc">Sort by Title Z-A</option>
+                <option value="updated-recent">Sort by Most Recently Updated</option>
+                <option value="updated-oldest">Sort by Oldest Updated</option>
+              </select>
             </div>
 
             <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -137,11 +143,10 @@ function Favorite() {
                         <p className="text-white">
                           Season {favorite.seasonIndex + 1}, Episode {favorite.episodeIndex + 1}
                         </p>
-             
                         <p className="text-gray-400 text-sm">
-  Added on: {new Date().toLocaleDateString()}
-</p>
-           <p className="text-gray-400 text-sm">
+                          Added on: {new Date().toLocaleDateString()}
+                  </p>
+                        <p className="text-gray-400 text-sm">
                           Last Updated: {new Date(favorite.updated).toLocaleDateString()}
                         </p>
                       </div>
