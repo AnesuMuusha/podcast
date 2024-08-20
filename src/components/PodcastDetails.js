@@ -149,7 +149,7 @@ function PodcastDetails({ onPlayEpisode }) {
                   {podcast.title} 
                 </h1>
                 <h1 className="text-xl lg:text-2xl text-orange-400">{podcast.seasons.length} Seasons</h1>
-                <p className="text-gray-400 text-sm mt-2">
+                <p className="text-orange-300 text-sm mt-2">
                   Last Updated: {podcast.updated ? formatDate(podcast.updated) : 'N/A'}
                 </p>
               </div>
