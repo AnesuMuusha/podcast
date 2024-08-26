@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import NavBar from "./NavBar";
 
 function PodcastDetails({ onPlayEpisode }) {
   const { id } = useParams();
@@ -138,11 +139,13 @@ function PodcastDetails({ onPlayEpisode }) {
   return (
     <div className="bg-gradient-to-b from-gray-500 to-gray-900 min-h-screen">
       <div className="container mx-auto p-4 lg:p-8">
+        
         {isLoading ? (
-          <div className="text-orange-400 p-4">Loading...</div>
+          <div className="text-orange-400 p-4  lg:text-10xl md:text-8xl sm:text-6xl animate-bounce">Loading...</div>
         ) : (
           <>
-            <div className="flex items-center space-x-4">
+          <NavBar/>
+            <div className="flex items-center space-x-4 pt-4">
               <img src={podcast.image} alt={podcast.title} className="w-40 h-1/4 lg:h40 object-cover shadow-lg  rounded" />
               <div>
                 <h1 className="text-2xl lg:text-4xl font-bold text-orange-400">
@@ -204,13 +207,13 @@ function PodcastDetails({ onPlayEpisode }) {
                                 <div className="flex items-center">
                                   <button
                                     onClick={() => handleToggleFavoriteEpisode(seasonIndex, episodeIndex)}
-                                    className={`ml-2 p-2 rounded-full ${isFavorite ? 'bg-yellow-500' : 'bg-orange-400'}`}
+                                    className={`min-w-[100px] ml-2 p-2 rounded-full ${isFavorite ? 'bg-yellow-500' : 'bg-orange-400'}`}
                                   >
                                     {isFavorite ? 'Unfavorite' : 'Favorite'}
                                   </button>
                                   <button
                                     onClick={() => handlePlayEpisode(seasonIndex, episodeIndex)}
-                                    className="ml-2 p-2 bg-blue-500 text-white rounded-full"
+                                    className="min-w-[100px] ml-2 p-2 bg-blue-500 text-white rounded-full"
                                   >
                                     {isListened ? 'Re-listen' : 'Play'}
                                   </button>

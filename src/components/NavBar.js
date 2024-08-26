@@ -21,7 +21,7 @@ function NavBar({ onSelectGenre, setSearchQuery }) {
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-gray-800 text-white p-4 w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
          

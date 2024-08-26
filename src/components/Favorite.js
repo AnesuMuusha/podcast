@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from './NavBar';
 
 function Favorite() {
   const [favoriteEpisodes, setFavoriteEpisodes] = useState([]);
@@ -112,69 +113,79 @@ function Favorite() {
   };
 
   return (
-    <div className="bg-gray-800 min-h-screen">
-      <div className="container mx-auto p-4 lg:p-8">
-        <h1 className="text-2xl lg:text-4xl mb-4 bg-gray-600 text-white py-2 px-4 rounded-full">Favorite Episodes</h1>
+    <div className="bg-gray-900 min-h-screen px-10px">
+      
+      <div className="container mx-auto">
+      <NavBar/>
+     <div className='p-4'>
+     <h1 className="text-2xl lg:text-4xl mb-4 bg-gray-600 text-white py-2 px-4 rounded-full">Favorite Episodes</h1>
+       
+       {loading ? (
+         <div className="text-orange-400 p-4 text-4xl lg:text-10xl md:text-8xl sm:text-6xl animate-bounce">
+         Loading...
+       </div>
 
-        {loading ? (
-          <div className="text-white">Loading...</div>
-        ) : (
-          <>
-            <div className="mb-4 flex space-x-2">
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
-              >
-                <option value="title-asc">Sort by Title A-Z</option>
-                <option value="title-desc">Sort by Title Z-A</option>
-                <option value="updated-recent">Sort by Most Recently Updated</option>
-                <option value="updated-oldest">Sort by Oldest Updated</option>
-              </select>
-            </div>
+) : (
+         <>
+           <div className="mb-4 flex space-x-2">
+             <select
+               value={sortOption}
+               onChange={(e) => setSortOption(e.target.value)}
+               className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+             >
+               <option value="title-asc">Sort by Title A-Z</option>
+               <option value="title-desc">Sort by Title Z-A</option>
+               <option value="updated-recent">Sort by Most Recently Updated</option>
+               <option value="updated-oldest">Sort by Oldest Updated</option>
+             </select>
+           </div>
 
-            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {favoriteEpisodes.length > 0 ? (
-                favoriteEpisodes.map((favorite, index) => (
-                  <li key={index} className="bg-gray-700 p-4 rounded shadow">
-                    <div className="flex justify-between">
-                      <div>
-                        <h3 className="text-lg text-orange-400">{favorite.podcastTitle}</h3>
-                        <p className="text-white">
-                          Season {favorite.seasonIndex + 1}, Episode {favorite.episodeIndex + 1}
-                        </p>
-                        <p className="text-gray-400 text-sm">
-                          Added on: {new Date().toLocaleDateString()}
-                  </p>
-                        <p className="text-gray-400 text-sm">
-                          Last Updated: {new Date(favorite.updated).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <button
-                          onClick={() => handleGoToPodcast(favorite.podcastId)}
-                          className="text-orange-400 hover:underline"
-                        >
-                          Go to Podcast
-                        </button>
-                        <button
-                          onClick={() => removeFavorite(favorite.podcastId, favorite.seasonIndex, favorite.episodeIndex)}
-                          className="text-orange-500 hover:text-orange-700"
-                          disabled={removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`]}
-                        >
-                          {removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`] ? 'Removing...' : 'Remove'}
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <div className="text-white">No favorites found.</div>
-              )}
-            </ul>
-          </>
-        )}
-      </div>
+           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+             {favoriteEpisodes.length > 0 ? (
+               favoriteEpisodes.map((favorite, index) => (
+                 <li key={index} className="bg-gray-700 p-4 rounded shadow">
+                   <div className="flex justify-between">
+                     <div>
+                       <h3 className="text-lg text-orange-400">{favorite.podcastTitle}</h3>
+                       <p className="text-white">
+                         Season {favorite.seasonIndex + 1}, Episode {favorite.episodeIndex + 1}
+                       </p>
+                       <p className="text-gray-400 text-sm">
+                         Added on: {new Date().toLocaleDateString()}
+                 </p>
+                       <p className="text-gray-400 text-sm">
+                         Last Updated: {new Date(favorite.updated).toLocaleDateString()}
+                       </p>
+                     </div>
+                     <div className="flex items-center space-x-4">
+                       <button
+                         onClick={() => handleGoToPodcast(favorite.podcastId)}
+                         className="text-orange-400 hover:underline"
+                       >
+                         Go to Podcast
+                       </button>
+                       <button
+                         onClick={() => removeFavorite(favorite.podcastId, favorite.seasonIndex, favorite.episodeIndex)}
+                         className="text-orange-500 hover:text-orange-700"
+                         disabled={removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`]}
+                       >
+                         {removing[`${favorite.podcastId}-${favorite.seasonIndex}-${favorite.episodeIndex}`] ? 'Removing...' : 'Remove'}
+                       </button>
+                     </div>
+                   </div>
+                 </li>
+               ))
+             ) : (
+               <div className="text-white">No favorites found.</div>
+             )}
+           </ul>
+         </>
+       )}
+
+      </div> 
+       
+       
+             </div>
     </div>
   );
 }

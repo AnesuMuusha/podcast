@@ -128,7 +128,7 @@ function Podcasts() {
     <div className="bg-gray-800 min-h-screen">
       <NavBar onSelectGenre={setSelectedGenre} setSearchQuery={setSearchQuery} />
       {isLoading ? (
-        <div className="text-orange-400 p-4 animate-pulse">Loading...</div>
+        <div className="text-orange-400 p-4  lg:text-10xl md:text-8xl sm:text-6xl animate-pulse">Loading...</div>
       ) : (
         <>
           <div className="container mx-auto p-4">
@@ -152,27 +152,27 @@ function Podcasts() {
               </Slider>
             )}
 
-            <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts</h1>
-            <div className="mb-4 flex space-x-2">
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
-              >
-                <option value="title-asc">Sort by Title A-Z</option>
-                <option value="title-desc">Sort by Title Z-A</option>
-                <option value="updated-recent">Sort by Most Recently Updated</option>
-                <option value="updated-oldest">Sort by Oldest Updated</option>
-              </select>
-              
-            </div >
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="mb-2 bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
-                placeholder="Search for podcasts..."
-              />
+            <h1 className="text-2xl font-bold mt-8 mb-4 text-orange-400">Podcasts:</h1>
+            <div className="mb-4 flex flex-col space-y-2">
+  <select
+    value={sortOption}
+    onChange={(e) => setSortOption(e.target.value)}
+    className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+  >
+    <option value="title-asc">Sort by Title A-Z</option>
+    <option value="title-desc">Sort by Title Z-A</option>
+    <option value="updated-recent">Sort by Most Recently Updated</option>
+    <option value="updated-oldest">Sort by Oldest Updated</option>
+  </select>
+  
+  <input
+    type="text"
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+    className="bg-gray-600 text-white py-2 px-4 rounded-full hover:bg-gray-500"
+    placeholder="Search for podcasts..."
+  />
+</div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
               {filteredPodcasts.map((podcast) => (
