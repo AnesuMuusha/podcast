@@ -38,7 +38,7 @@ function App() {
         
         <Route path="/favorite" element={<Favorite />} />  
       </Routes>
-      <GlobalAudioPlayer
+     <GlobalAudioPlayer
         playingEpisode={playingEpisode}
         onPlayPause={handlePlayPause}
         onTimeUpdate={handleTimeUpdate}
