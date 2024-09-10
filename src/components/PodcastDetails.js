@@ -86,15 +86,24 @@ function PodcastDetails({ onPlayEpisode }) {
       title: `Season ${seasonIndex + 1} Episode ${episodeIndex + 1}`,
       audioSrc: "https://podcast-api.netlify.app/placeholder-audio.mp3",
     };
-
-    onPlayEpisode(episode);
-
-    const savedPosition = localStorage.getItem(`playback-${id}-${seasonIndex}-${episodeIndex}`);
-    if (savedPosition) {
-      episode.savedPosition = parseFloat(savedPosition);
+  
+    const isFullyListened = fullyListenedEpisodes.some(
+      (ep) => ep.seasonIndex === seasonIndex && ep.episodeIndex === episodeIndex
+    );
+  
+    if (isFullyListened) {
+      episode.savedPosition = 0; // Start from the beginning
+    } else {
+      const savedPosition = localStorage.getItem(`playback-${id}-${seasonIndex}-${episodeIndex}`);
+      if (savedPosition) {
+        episode.savedPosition = parseFloat(savedPosition);
+      }
     }
-
-    setTimeout(() => handleEpisodeEnd(seasonIndex, episodeIndex), 3000); // Assume 3 seconds to mark as listened
+  
+    onPlayEpisode(episode);
+  
+  
+    setTimeout(() => handleEpisodeEnd(seasonIndex, episodeIndex), 3000);
   };
 
   const handleResetListenedHistory = () => {
@@ -169,12 +178,14 @@ function PodcastDetails({ onPlayEpisode }) {
                 {isDescriptionExpanded ? 'Show Less' : 'Show More'}
               </span>
             </p>
-            <button
-              onClick={handleResetListenedHistory}
-              className="mt-4 bg-orange-400 text-white p-2 rounded-full"
-            >
-              Reset Listened History
-            </button>
+            {fullyListenedEpisodes.length > 0 && (
+  <button
+    onClick={handleResetListenedHistory}
+    className="mt-4 bg-orange-400 text-white p-2 rounded-full"
+  >
+    Reset Listened History
+  </button>
+)}
             <div className="mt-8">
               {podcast.seasons.map((season, seasonIndex) => (
                 <div key={seasonIndex} className="mb-6">

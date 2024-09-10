@@ -85,27 +85,38 @@ function Favorite() {
   const removeFavorite = async (podcastId, seasonIndex, episodeIndex) => {
     const key = `favorites-${podcastId}`;
     const storedFavorites = JSON.parse(localStorage.getItem(key)) || [];
-
+  
     // Track which item is being removed
     setRemoving((prev) => ({
       ...prev,
       [`${podcastId}-${seasonIndex}-${episodeIndex}`]: true,
     }));
-
+  
     const updatedFavorites = storedFavorites.filter(
       (fav) => fav.seasonIndex !== seasonIndex || fav.episodeIndex !== episodeIndex
     );
-
+  
+    // Update the favoriteEpisodes state immediately
+    setFavoriteEpisodes((prevFavorites) =>
+      prevFavorites.filter(
+        (fav) =>
+          fav.podcastId !== podcastId ||
+          fav.seasonIndex !== seasonIndex ||
+          fav.episodeIndex !== episodeIndex
+      )
+    );
+  
     await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
-
+  
     if (updatedFavorites.length > 0) {
       localStorage.setItem(key, JSON.stringify(updatedFavorites));
     } else {
       localStorage.removeItem(key);
     }
-
+  
+    // Refetch favorites to ensure the latest data is displayed
     fetchFavorites();
-  };
+    };
 
   const handleGoToPodcast = (podcastId) => {
     setLoading(true);
